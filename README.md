@@ -26,7 +26,7 @@ public class ExampleSystem extends ScriptableSystem {
   }
 
   public func OnHeader(data: String) -> Void {
-    Log("ExampleSystem::OnHeader" + data);
+    Log("ExampleSystem::OnHeader " + data);
   }
 
   public func OnProgress(downloadTotal: Int64, downloadNow: Int64, uploadTotal: Int64, uploadNow: Int64) -> Void {
