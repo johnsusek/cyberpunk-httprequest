@@ -67,3 +67,12 @@ While data is being transferred it will be called very frequently, and during
 slow periods like when nothing is being transferred it can slow down to about
 one call per second. The callback gets told how much data libcurl will
 transfer and has transferred, in number of bytes.
+
+## Building
+
+```bash
+cmake -E make_directory build
+cd build
+cmake .. -A x64 -DCMAKE_BUILD_TYPE=Debug
+cmake --build . --config Debug
+```
