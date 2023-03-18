@@ -39,7 +39,6 @@ public class ExampleSystem extends ScriptableSystem {
 
 Your redscript handler class should implement at least one of these functions.
 
-<br>
 
 ```swift
 public func OnWrite(data: String) -> Void
@@ -50,7 +49,6 @@ received that needs to be saved, and provides for streaming downloads. You
 could buffer data in your own way, or write every chunk immediately out to
 some other stream or file.
 
-<br>
 
 ```swift
 public func OnHeader(data: String) -> Void
@@ -60,7 +58,6 @@ This callback function gets called once for each non-data line
 received from the server. This includes empty lines and the HTTP status line.
 \r\n endings are preserved.
 
-<br>
 
 ```swift
 public func OnProgress(downloadTotal: Int64, downloadNow: Int64, uploadTotal: Int64, uploadNow: Int64) -> Void
