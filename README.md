@@ -2,7 +2,7 @@
 
 Make HTTP requests inside Cyberpunk 2077 mods.
 
-<img width="573" alt="httprequest" src="https://user-images.githubusercontent.com/611996/226085826-bd5f537c-cad3-494b-90f6-4cbbda51be68.png">
+<img width="100%" alt="httprequest" src="https://user-images.githubusercontent.com/611996/226085826-bd5f537c-cad3-494b-90f6-4cbbda51be68.png">
 
 ## Installation
 
