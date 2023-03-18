@@ -43,9 +43,8 @@ public class ExampleSystem extends ScriptableSystem {
     Log(data);
   }
 
-  public func OnProgress(downloadTotal: Int64, downloadNow: Int64, uploadTotal: Int64, uploadNow: Int64) -> Bool {
+  public func OnProgress(downloadTotal: Int64, downloadNow: Int64, uploadTotal: Int64, uploadNow: Int64) -> Void {
     Log(s"ExampleSystem::OnProgress downloadTotal: \(downloadTotal) downloadNow: \(downloadNow) uploadTotal: \(uploadTotal) uploadNow: \(uploadNow)");
-    return true;
   }
 }
 ```
