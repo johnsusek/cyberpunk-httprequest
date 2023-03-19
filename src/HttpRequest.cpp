@@ -13,7 +13,8 @@ TTypedClass<HttpRequest> httpRequest("HttpRequest");
 
 CClass *HttpRequest::GetNativeType() { return &httpRequest; }
 
-void open(IScriptable *aContext, CStackFrame *aFrame, CString *aOut, int64_t a4) {
+void open(IScriptable *aContext, CStackFrame *aFrame, CString *aOut,
+          int64_t a4) {
   RED4EXT_UNUSED_PARAMETER(aContext);
   RED4EXT_UNUSED_PARAMETER(a4);
 
@@ -36,17 +37,18 @@ void open(IScriptable *aContext, CStackFrame *aFrame, CString *aOut, int64_t a4)
     return true;
   };
 
-  auto onProgress = [handler](cpr_off_t downloadTotal, cpr_off_t downloadNow, cpr_off_t uploadTotal, cpr_off_t uploadNow, intptr_t userdata) -> bool {
-    handler.instance->ExecuteFunction(CName("OnProgress"), downloadTotal, downloadNow, uploadTotal, uploadNow);
+  auto onProgress = [handler](cpr_off_t downloadTotal, cpr_off_t downloadNow,
+                              cpr_off_t uploadTotal, cpr_off_t uploadNow,
+                              intptr_t userdata) -> bool {
+    handler.instance->ExecuteFunction(CName("OnProgress"), downloadTotal,
+                                      downloadNow, uploadTotal, uploadNow);
     return true;
   };
 
   if (method == "GET") {
-    AsyncResponse fr = GetAsync(
-        Url{url.c_str()},
-        WriteCallback(onWrite),
-        HeaderCallback(onHeader),
-        ProgressCallback(onProgress));
+    AsyncResponse fr =
+        GetAsync(Url{url.c_str()}, WriteCallback(onWrite),
+                 HeaderCallback(onHeader), ProgressCallback(onProgress));
   }
 }
 
@@ -67,4 +69,4 @@ void PostRegisterTypes() {
   httpRequest.RegisterFunction(openFn);
 }
 
-} // namespace http
+} // namespace HttpRequest

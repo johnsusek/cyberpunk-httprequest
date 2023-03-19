@@ -72,8 +72,7 @@ transfer and has transferred, in number of bytes.
 ## Building
 
 ```bash
-cmake -E make_directory build
 cd build
-cmake .. -A x64 -DCMAKE_BUILD_TYPE=Debug
-cmake --build . --config Debug
+cmake .. -A x64 -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
 ```

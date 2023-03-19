@@ -1,4 +1,6 @@
 .vscode/
 deps/
-build/
+build/*
+!build/.gitkeep
 dist/
+.DS_Store
