@@ -1,4 +1,5 @@
 .vscode/
 build/
 dist/
+deps/
 .DS_Store
