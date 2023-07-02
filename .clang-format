@@ -1,2 +1,19 @@
 IndentWidth: 2
 TabWidth: 2
+DerivePointerAlignment: false
+PointerAlignment: Left
+ColumnLimit: 105
+AllowShortIfStatementsOnASingleLine: true
+BraceWrapping:
+  AfterClass:      true
+  AfterControlStatement: false
+  AfterEnum:       false
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: false
+  AfterStruct:     false
+  AfterUnion:      false
+  BeforeCatch:     false
+  BeforeElse:      true
+  IndentBraces:    false
+BreakBeforeBraces: Custom

@@ -1,0 +1,6 @@
+[submodule "deps/poco"]
+	path = deps/poco
+	url = https://github.com/pocoproject/poco.git
+[submodule "deps/red4ext"]
+	path = deps/red4ext
+	url = https://github.com/WopsS/RED4ext.SDK.git
