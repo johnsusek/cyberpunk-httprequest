@@ -1,45 +1,47 @@
+#include "Poco/Exception.h"
+#include "Poco/Net/HTTPCredentials.h"
+#include "Poco/NullStream.h"
+#include "Poco/Path.h"
+#include "Poco/StreamCopier.h"
+#include "Poco/URI.h"
+#include "RedscriptJsonHandler.cpp"
+#include "RedscriptJsonHandler.h"
 #include <Poco/JSON/JSON.h>
 #include <Poco/JSON/Object.h>
 #include <Poco/JSON/Parser.h>
+#include <Poco/JSON/PrintHandler.h>
+#include <Poco/Net/HTTPClientSession.h>
+#include <Poco/Net/HTTPRequest.h>
+#include <Poco/Net/HTTPResponse.h>
+#include <Poco/Net/Net.h>
 #include <RED4ext/RED4ext.hpp>
 #include <iostream>
+
+using Poco::Exception;
+using Poco::Path;
+using Poco::StreamCopier;
+using Poco::URI;
+using Poco::Net::HTTPClientSession;
+using Poco::Net::HTTPMessage;
+using Poco::Net::HTTPRequest;
+using Poco::Net::HTTPResponse;
 
 namespace HttpRequest {
 using namespace std;
 using namespace RED4ext;
 using namespace Poco::JSON;
+using namespace Poco::Net;
 
 struct HttpRequest : IScriptable {
-  CClass *GetNativeType();
+  CClass* GetNativeType();
 };
 
 TTypedClass<HttpRequest> httpRequest("HttpRequest");
 
-CClass *HttpRequest::GetNativeType() { return &httpRequest; }
+CClass* HttpRequest::GetNativeType() { return &httpRequest; }
 
-void parseJson() {
-  std::string json = "{ \"test\" : { \"property\" : \"value\" } }";
-  Parser parser;
-  auto result = parser.parse(json);
-
-  // use pointers to avoid copying
-  Object::Ptr object = result.extract<Object::Ptr>();
-  auto test = object->get("test"); // holds { "property" : "value" }
-
-  Object::Ptr subObject = test.extract<Object::Ptr>();
-  test = subObject->get("property");
-  std::string val = test.toString(); // val holds "value"
-
-  // copy/convert to Poco::DynamicStruct
-  Poco::DynamicStruct ds = *object;
-  auto val2 = ds["test"]["property"]; // val holds "value"
-
-  cout << val << endl;
-  cout << val2.toString() << endl;
-}
-
-void open(IScriptable *aContext, CStackFrame *aFrame, CString *aOut,
-          int64_t a4) {
+void open(IScriptable* aContext, CStackFrame* aFrame, CString* aOut, int64_t a4)
+{
   RED4EXT_UNUSED_PARAMETER(aContext);
   RED4EXT_UNUSED_PARAMETER(a4);
 
@@ -47,65 +49,45 @@ void open(IScriptable *aContext, CStackFrame *aFrame, CString *aOut,
   GetParameter(aFrame, &method);
   CString url;
   GetParameter(aFrame, &url);
-  Handle<IScriptable> handler;
-  GetParameter(aFrame, &handler);
   Handle<IScriptable> schema;
   GetParameter(aFrame, &schema);
 
-  parseJson();
+  auto instanceType = schema.instance->GetType();
 
-  // auto instance = schema.instance;
-  // auto instanceType = instance->GetType();
+  ScriptInstance scriptInstance = static_cast<ScriptInstance>(schema.instance);
 
-  // RED4ext::DynArray<RED4ext::CProperty *> props;
-  // instanceType->GetProperties(props);
+  URI uri(url.c_str());
+  string path(uri.getPathAndQuery());
+  if (path.empty()) path = "/";
 
-  // for (auto &prop : props) {
-  //   auto name = prop->name.ToString();
-  //   CName propType = prop->type->GetName();
-  //   auto type = propType.ToString();
-  // Get key with `name` from JSON and check if it is `type`
-  // then SetValue on the prop
-  // }
+  HTTPClientSession session(uri.getHost(), uri.getPort());
+  HTTPRequest request(method.c_str(), path, HTTPMessage::HTTP_1_1);
+  HTTPResponse response;
+
+  session.sendRequest(request);
+  istream& rs = session.receiveResponse(response);
+  cout << response.getStatus() << " " << response.getReason() << endl;
+
+  if (response.getStatus() == HTTPResponse::HTTP_OK) {
+    RedscriptJsonHandler::Ptr pHandler = new RedscriptJsonHandler(schema);
+    Parser parser;
+    parser.setHandler(pHandler);
+    parser.parse(rs);
+    parser.reset();
+  }
 
   aFrame->code++;
-
-  // auto onWrite = [handler](string data, intptr_t userdata) -> bool {
-  //   handler.instance->ExecuteFunction(CName("OnWrite"),
-  //   CString(data.data())); return true;
-  // };
-
-  // auto onHeader = [handler](string data, intptr_t userdata) -> bool {
-  //   handler.instance->ExecuteFunction(CName("OnHeader"),
-  //   CString(data.data())); return true;
-  // };
-
-  // auto onProgress = [handler](cpr_off_t downloadTotal, cpr_off_t downloadNow,
-  //                             cpr_off_t uploadTotal, cpr_off_t uploadNow,
-  //                             intptr_t userdata) -> bool {
-  //   handler.instance->ExecuteFunction(CName("OnProgress"), downloadTotal,
-  //                                     downloadNow, uploadTotal, uploadNow);
-  //   return true;
-  // };
-
-  // if (method == "GET") {
-  //   std::ofstream of("1.jpg", std::ios::binary);
-  //   cpr::Response r =
-  //       cpr::Download(of, cpr::Url{"http://www.httpbin.org/1.jpg"});
-
-  //   AsyncResponse fr =
-  //       GetAsync(Url{url.c_str()}, WriteCallback(onWrite),
-  //                HeaderCallback(onHeader), ProgressCallback(onProgress));
-  // }
 }
 
-void RegisterTypes() {
+void RegisterTypes()
+{
   CNamePool::Add("HttpRequest");
   httpRequest.flags = {.isNative = true};
   CRTTISystem::Get()->RegisterType(&httpRequest);
 }
 
-void PostRegisterTypes() {
+void PostRegisterTypes()
+{
   auto rtti = CRTTISystem::Get();
   auto scriptable = rtti->GetClass("IScriptable");
   httpRequest.parent = scriptable;

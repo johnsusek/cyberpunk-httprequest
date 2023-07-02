@@ -10,4 +10,4 @@ target_include_directories(cyberpunk-httprequest PUBLIC ${CMAKE_CURRENT_SOURCE_D
 target_sources(cyberpunk-httprequest PRIVATE ${PROJECT_SRC_FILES})
 
 target_link_libraries(cyberpunk-httprequest PRIVATE RED4ext::SDK)
-target_link_libraries(cyberpunk-httprequest PRIVATE Poco::Foundation Poco::JSON)
+target_link_libraries(cyberpunk-httprequest PRIVATE Poco::Foundation Poco::JSON Poco::Net)

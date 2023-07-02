@@ -10,9 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../dist/)
 
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/deps)
 
-find_package(Poco REQUIRED Foundation JSON)
+find_package(Poco REQUIRED Foundation JSON Net)
 find_package(RED4ext REQUIRED)
-
-include(FetchContent)
 
 add_subdirectory(src)

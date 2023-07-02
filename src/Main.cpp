@@ -1,5 +1,6 @@
-#include <RED4ext/RED4ext.hpp>
+#define _WINSOCKAPI_
 #include "HttpRequest.cpp"
+#include <RED4ext/RED4ext.hpp>
 
 RED4EXT_C_EXPORT void RED4EXT_CALL RegisterTypes() {
   HttpRequest::RegisterTypes();
